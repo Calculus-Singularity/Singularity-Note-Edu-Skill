@@ -1,0 +1,77 @@
+{
+  "schema": "singnote.flow.v1",
+  "nodes": {
+    "start": {
+      "type": "start",
+      "title": "开始"
+    },
+    "video1": {
+      "type": "video",
+      "title": "变量视频",
+      "video": {
+        "url": "https://example.com/variables.mp4",
+        "duration_seconds": 240
+      }
+    },
+    "intro": {
+      "type": "markdown",
+      "title": "变量是什么",
+      "body": "## 变量\n变量是给值起名字。"
+    },
+    "code1": {
+      "type": "programming_problem",
+      "title": "打印名字",
+      "problem": {
+        "prompt": "读取一行名字并原样输出。",
+        "language": "python",
+        "entry_file": "main.py",
+        "starter_code": "name = input().strip()\nprint(name)\n",
+        "checker": "exact",
+        "tests": [
+          {
+            "visibility": "sample",
+            "input": "Ada\n",
+            "output": "Ada\n"
+          },
+          {
+            "visibility": "hidden",
+            "input": "Grace\n",
+            "output": "Grace\n"
+          }
+        ]
+      }
+    },
+    "split1": {
+      "type": "split_card",
+      "title": "读题并编码",
+      "slots": {
+        "left": "intro",
+        "right": "code1"
+      }
+    },
+    "quiz1": {
+      "type": "exercise",
+      "title": "变量小测",
+      "exercise": {
+        "type": "single_choice",
+        "prompt": "下面哪个是 Python 变量赋值？",
+        "choices": {
+          "A": "`name = \"Ada\"`",
+          "B": "`print(name)`"
+        },
+        "answer": ["A"],
+        "explanation": "赋值语句会把值绑定到名字。"
+      }
+    },
+    "set1": {
+      "type": "exercise_set",
+      "title": "变量练习"
+    }
+  },
+  "edges": [
+    { "from": "start", "to": "video1", "type": "required" },
+    { "from": "video1", "to": "split1", "type": "required" },
+    { "from": "quiz1", "to": "set1", "type": "membership" },
+    { "from": "set1", "to": "video1", "type": "video_pause", "at": "01:20" }
+  ]
+}

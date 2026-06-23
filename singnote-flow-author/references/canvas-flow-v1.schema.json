@@ -1,0 +1,326 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.singnote.local/canvas-flow-v1.schema.json",
+  "title": "SingNote Canvas Flow JSON v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "nodes", "edges"],
+  "properties": {
+    "schema": {
+      "const": "singnote.flow.v1"
+    },
+    "nodes": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    }
+  },
+  "$defs": {
+    "node": {
+      "oneOf": [
+        { "$ref": "#/$defs/startNode" },
+        { "$ref": "#/$defs/markdownNode" },
+        { "$ref": "#/$defs/videoNode" },
+        { "$ref": "#/$defs/materialNode" },
+        { "$ref": "#/$defs/exerciseNode" },
+        { "$ref": "#/$defs/exerciseSetNode" },
+        { "$ref": "#/$defs/programmingProblemNode" },
+        { "$ref": "#/$defs/codingWorkspaceNode" },
+        { "$ref": "#/$defs/splitCardNode" },
+        { "$ref": "#/$defs/peerReviewNode" }
+      ]
+    },
+    "baseNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "title"],
+      "properties": {
+        "type": { "type": "string" },
+        "title": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "body": { "type": "string" },
+        "position": { "$ref": "#/$defs/position" },
+        "estimated_minutes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "startNode": {
+      "allOf": [
+        { "$ref": "#/$defs/baseNode" },
+        {
+          "type": "object",
+          "properties": { "type": { "const": "start" } }
+        }
+      ]
+    },
+    "markdownNode": {
+      "allOf": [
+        { "$ref": "#/$defs/baseNode" },
+        {
+          "type": "object",
+          "properties": { "type": { "const": "markdown" } }
+        }
+      ]
+    },
+    "videoNode": {
+      "allOf": [
+        { "$ref": "#/$defs/baseNode" },
+        {
+          "type": "object",
+          "properties": {
+            "type": { "const": "video" },
+            "video": { "$ref": "#/$defs/video" }
+          }
+        }
+      ]
+    },
+    "materialNode": {
+      "allOf": [
+        { "$ref": "#/$defs/baseNode" },
+        {
+          "type": "object",
+          "properties": {
+            "type": { "const": "material" },
+            "material": { "$ref": "#/$defs/material" }
+          }
+        }
+      ]
+    },
+    "exerciseNode": {
+      "allOf": [
+        { "$ref": "#/$defs/baseNode" },
+        {
+          "type": "object",
+          "required": ["exercise"],
+          "properties": {
+            "type": { "const": "exercise" },
+            "exercise": { "$ref": "#/$defs/exercise" }
+          }
+        }
+      ]
+    },
+    "exerciseSetNode": {
+      "allOf": [
+        { "$ref": "#/$defs/baseNode" },
+        {
+          "type": "object",
+          "properties": { "type": { "const": "exercise_set" } }
+        }
+      ]
+    },
+    "programmingProblemNode": {
+      "allOf": [
+        { "$ref": "#/$defs/baseNode" },
+        {
+          "type": "object",
+          "required": ["problem"],
+          "properties": {
+            "type": { "const": "programming_problem" },
+            "problem": { "$ref": "#/$defs/programmingProblem" }
+          }
+        }
+      ]
+    },
+    "codingWorkspaceNode": {
+      "allOf": [
+        { "$ref": "#/$defs/baseNode" },
+        {
+          "type": "object",
+          "properties": {
+            "type": { "const": "coding_workspace" },
+            "workspace": { "$ref": "#/$defs/workspace" }
+          }
+        }
+      ]
+    },
+    "splitCardNode": {
+      "allOf": [
+        { "$ref": "#/$defs/baseNode" },
+        {
+          "type": "object",
+          "required": ["slots"],
+          "properties": {
+            "type": { "const": "split_card" },
+            "slots": { "$ref": "#/$defs/splitSlots" }
+          }
+        }
+      ]
+    },
+    "peerReviewNode": {
+      "allOf": [
+        { "$ref": "#/$defs/baseNode" },
+        {
+          "type": "object",
+          "properties": { "type": { "const": "peer_review" } }
+        }
+      ]
+    },
+    "position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      }
+    },
+    "video": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "url": { "type": "string" },
+        "duration_seconds": { "type": "integer", "minimum": 0 },
+        "thumbnail_url": { "type": "string" }
+      }
+    },
+    "material": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "asset_key": { "type": "string" },
+        "file_name": { "type": "string" },
+        "mime_type": { "type": "string" },
+        "original_url": { "type": "string" },
+        "preview_url": { "type": "string" },
+        "conversion_status": {
+          "enum": ["none", "pending", "processing", "ready", "failed"]
+        }
+      }
+    },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "language": { "const": "python" },
+        "entry_file": { "type": "string" },
+        "starter_code": { "type": "string" }
+      }
+    },
+    "splitSlots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["left", "right"],
+      "properties": {
+        "left": { "type": "string", "minLength": 1 },
+        "right": { "type": "string", "minLength": 1 }
+      }
+    },
+    "exercise": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "prompt"],
+      "properties": {
+        "type": {
+          "enum": [
+            "single_choice",
+            "multiple_choice",
+            "true_false",
+            "fill_blank"
+          ]
+        },
+        "prompt": { "type": "string", "minLength": 1 },
+        "choices": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "answer": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 1
+            },
+            { "type": "boolean" }
+          ]
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["accepted_answer"],
+            "properties": {
+              "blank_key": { "type": "string" },
+              "accepted_answer": { "type": "string" },
+              "match_mode": {
+                "enum": ["exact", "trim", "case_insensitive"]
+              }
+            }
+          }
+        },
+        "explanation": { "type": "string" },
+        "sort_order": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "programmingProblem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prompt", "starter_code", "tests"],
+      "properties": {
+        "prompt": { "type": "string", "minLength": 1 },
+        "language": { "const": "python" },
+        "entry_file": { "type": "string" },
+        "starter_code": { "type": "string" },
+        "checker": { "enum": ["exact", "whitespace", "float_tolerance"] },
+        "float_tolerance": { "type": "number" },
+        "time_limit_ms": { "type": "integer", "minimum": 1 },
+        "memory_limit_mb": { "type": "integer", "minimum": 1 },
+        "explanation": { "type": "string" },
+        "sort_order": { "type": "integer", "minimum": 0 },
+        "tests": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["visibility", "input", "output"],
+            "properties": {
+              "visibility": { "enum": ["sample", "hidden"] },
+              "input": { "type": "string" },
+              "output": { "type": "string" },
+              "feedback": { "type": "string" },
+              "full_feedback": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "type"],
+      "properties": {
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "type": {
+          "enum": [
+            "required",
+            "recommended",
+            "membership",
+            "video_pause",
+            "peer_review_reference"
+          ]
+        },
+        "at": {
+          "oneOf": [
+            { "type": "integer", "minimum": 0 },
+            {
+              "type": "string",
+              "pattern": "^(\\d+|\\d{1,2}:\\d{2}|\\d+:\\d{2}:\\d{2})$"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+interface:
+  display_name: "SingNote Flow Author"
+  short_description: "Create and import SingNote course flows"
+  brand_color: "#176B5B"
+  default_prompt: "Use $singnote-flow-author to create a validated SingNote Flow JSON course and import it through MCP."
